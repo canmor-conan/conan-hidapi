@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, AutoToolsBuildEnvironment, tools
+from conans import ConanFile, CMake, AutoToolsBuildEnvironment, MSBuild, tools
 
 
 class HidapiConan(ConanFile):
@@ -33,8 +33,8 @@ class HidapiConan(ConanFile):
             self.build_unix()
 
     def build_msvc(self):
-         msbuild = MSBuild(self)
-         msbuild.build("windows/hidapi.sln")
+        msbuild = MSBuild(self)
+        msbuild.build("%s/windows/hidapi.sln" % self.source_dir, platforms={"x86":"Win32"})
 
     def build_unix(self):
         args = ["-prefix %s" % self.package_folder]
@@ -47,7 +47,7 @@ class HidapiConan(ConanFile):
         autotools.install()
 
     def package(self):
-        self.copy("*.h", dst="include", src="hidapi")
+        self.copy("*.h", dst="include/hidapi", src="hidapi")
         self.copy("*hidapi.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
