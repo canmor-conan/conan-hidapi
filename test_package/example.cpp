@@ -1,6 +1,6 @@
 #include <iostream>
-#include "hello.h"
+#include "hidapi/hidapi.h"
 
 int main() {
-    hello();
+    hid_init();
 }
