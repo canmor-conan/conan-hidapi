@@ -55,5 +55,8 @@ class HidapiConan(ConanFile):
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["hidapi"]
+        if self.settings.os == "Linux":
+            self.cpp_info.libs = ["hidapi-libusb"]
+        else:
+            self.cpp_info.libs = ["hidapi"]
 
