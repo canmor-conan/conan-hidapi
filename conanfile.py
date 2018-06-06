@@ -41,8 +41,10 @@ class HidapiConan(ConanFile):
         msbuild.build("%s/windows/hidapi.sln" % self.source_dir, platforms={"x86":"Win32"})
 
     def build_unix(self):
-        args = ["-prefix %s" % self.package_folder]
         self.run("cd %s && ./bootstrap" % self.source_dir)
+        if self.settings.os == "Macos":
+            configure = "%s/configure" % self.source_dir
+            tools.replace_in_file(configure, r"-install_name \$rpath/", "-install_name ")
         autotools = AutoToolsBuildEnvironment(self)
         if self.settings.os == "Macos":
             autotools.flags.append('-mmacosx-version-min=%s' % self.options.minosx)
