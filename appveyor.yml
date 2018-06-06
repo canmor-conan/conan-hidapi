@@ -10,6 +10,7 @@ environment:
     CONAN_LOGIN_USERNAME: "canmor"
     CONAN_CHANNEL: "stable"
     CONAN_UPLOAD: "https://api.bintray.com/conan/canmor/conan"
+    CONAN_ARCHS: "x86"
 
     matrix:
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015

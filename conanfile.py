@@ -15,6 +15,10 @@ class HidapiConan(ConanFile):
     generators = "cmake"
     source_dir = "hidapi-master"
 
+    def configure(self):
+        if self.settings.os == "Windows":
+            self.settings.arch.remove("x86_64")
+
     def config_options(self):
         if self.settings.os != "Macos":
             self.options.remove('minosx')
@@ -47,7 +51,7 @@ class HidapiConan(ConanFile):
         autotools.install()
 
     def package(self):
-        self.copy("*.h", dst="include/hidapi", src="hidapi")
+        self.copy("hidapi/*.h", dst="include", src=self.source_dir)
         self.copy("*hidapi.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
