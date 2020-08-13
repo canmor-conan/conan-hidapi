@@ -1,6 +1,6 @@
 # conan-hidapi
 
-conan-hidapi is a conan package for [signal11/hidapi](https://github.com/signal11/hidapi).
+conan-hidapi is a conan package for [libusb/hidapi](https://github.com/libusb/hidapi).
 
 ## Package Status
 
@@ -17,10 +17,6 @@ This packages can be found in the my personal Conan repository:
 *Note: You can click the "Set Me Up" button on the Bintray page above for instructions on using packages from this repository.*
 
 ## Known Issues
-
-* This package version is named `latest` and pointed to HEAD of master branch, which might move up-to-date in future and broken your use.
-
-    The latest release tag is 0.8 which was tagged at 2013, there're some critical bugs on that version such as crash on macOS, I can not figure out a release tag version to use.
 
 * Not support x64 for Windows
 
