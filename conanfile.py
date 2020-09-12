@@ -16,7 +16,7 @@ class HidapiConan(ConanFile):
     default_options = {
         "minosx": 10.7, "fPIC": True, "with_libusb": False
     }
-    generators = "cmake"
+    generators = "pkg_config"
     _source_dir = "hidapi-hidapi-{}".format(version)
 
     def configure(self):
