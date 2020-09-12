@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, AutoToolsBuildEnvironment, MSBuild, tools
+from conans import ConanFile, AutoToolsBuildEnvironment, MSBuild, tools
 
 
 class HidapiConan(ConanFile):
@@ -9,10 +9,13 @@ class HidapiConan(ConanFile):
     description = "conan package for libusb/hidapi"
     settings = "os", "compiler", "build_type", "arch"
     options = {
-        "minosx": ['10.7', '10.8', '10.9', '10.10', '10.11']
+        "minosx": ['10.7', '10.8', '10.9', '10.10', '10.11'],
+        "fPIC": [True, False],
+        "with_libusb": [True, False]
     }
-    default_options = "minosx=10.7"
-    requires = "libusb/[~=1.0]"
+    default_options = {
+        "minosx": 10.7, "fPIC": True, "with_libusb": False
+    }
     generators = "cmake"
     _source_dir = "hidapi-hidapi-{}".format(version)
 
@@ -22,11 +25,17 @@ class HidapiConan(ConanFile):
 
     def config_options(self):
         if self.settings.os != "Macos":
-            self.options.remove('minosx')
+            del self.options.minosx
+        if self.settings.os != "Linux":
+            del self.options.with_libusb
+
+    def requirements(self):
+        if self.options.with_libusb:
+            self.requires("libusb/[~=1.0]")
 
     def source(self):
-        tools.download("https://github.com/libusb/hidapi/archive/hidapi-{}.zip".format(self.version),
-                        "hidapi.zip")
+        tools.download("https://github.com/libusb/hidapi/archive/hidapi-{}.zip"
+                       .format(self.version), "hidapi.zip")
         tools.unzip("hidapi.zip")
         if self.settings.os != "Windows":
             self.run("chmod +x ./%s/bootstrap" % self._source_dir)
@@ -40,16 +49,20 @@ class HidapiConan(ConanFile):
 
     def build_msvc(self):
         msbuild = MSBuild(self)
-        msbuild.build("%s/windows/hidapi.sln" % self._source_dir, platforms={"x86":"Win32"})
+        msbuild.build("%s/windows/hidapi.sln" % self._source_dir,
+                      platforms={"x86": "Win32"})
 
     def build_unix(self):
         self.run("cd %s && ./bootstrap" % self._source_dir)
         if self.settings.os == "Macos":
             configure = "%s/configure" % self._source_dir
-            tools.replace_in_file(configure, r"-install_name \$rpath/", "-install_name ")
+            tools.replace_in_file(configure, r"-install_name \$rpath/",
+                                  "-install_name ")
         autotools = AutoToolsBuildEnvironment(self)
         if self.settings.os == "Macos":
-            autotools.flags.append('-mmacosx-version-min=%s' % self.options.minosx)
+            autotools.flags.append('-mmacosx-version-min=%s' %
+                                   self.options.minosx)
+
         autotools.configure(self._source_dir)
         autotools.make()
         autotools.install()
@@ -64,7 +77,9 @@ class HidapiConan(ConanFile):
 
     def package_info(self):
         if self.settings.os == "Linux":
-            self.cpp_info.libs = ["hidapi-libusb"]
+            if self.options.with_libusb:
+                self.cpp_info.libs = ["hidapi-libusb"]
+            else:
+                self.cpp_info.libs = ["hidapi-hidraw"]
         else:
             self.cpp_info.libs = ["hidapi"]
-
