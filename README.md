@@ -20,8 +20,6 @@ This packages can be found in the my personal Conan repository:
 
 * Not support x64 for Windows
 
-    [signal11/hidapi](https://github.com/signal11/hidapi) provides a `sln` file to build for Windows, which lack support x64.
-
-* Did not get a real usage test on Linux yet
+    [libusb/hidapi](https://github.com/libusb/hidapi) provides a `sln` file to build for Windows, which lack support x64.
 
 If you get an idea to solve one of this issues, please report here or fork.
